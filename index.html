@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="ja">
 <head>
@@ -6,282 +7,233 @@
 <title>カード選択ジェネレーター</title>
 <style>
 :root {
-  --bg: #f3f6fb;
-  --panel: #ffffff;
-  --ink: #172b4d;
-  --muted: #64748b;
-  --blue: #3979ef;
-  --line: #dbe4f0;
-  --gold: #d9b66d;
+  --bg: #f3f5fa;
+  --panel: #fff;
+  --ink: #25324a;
+  --muted: #78849a;
+  --blue: #4678e8;
+  --line: #dce3ef;
+  --gold: #e2c17c;
 }
 * { box-sizing: border-box; }
 body {
   margin: 0;
-  background: linear-gradient(140deg, #f4f8ff, #f8f5ff);
+  background: linear-gradient(145deg, #f2f6ff, #f9f5ff);
   color: var(--ink);
-  font-family: system-ui, -apple-system, "Hiragino Kaku Gothic ProN",
-    "Noto Sans JP", sans-serif;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont,
+    "Hiragino Kaku Gothic ProN", "Noto Sans JP", sans-serif;
 }
 header {
-  padding: 26px 16px 22px;
+  padding: 24px 16px;
   text-align: center;
-  border-bottom: 1px solid #e3eaf4;
-  background: #ffffffd9;
+  background: #ffffffdd;
+  border-bottom: 1px solid var(--line);
 }
-h1 { margin: 0; font-size: clamp(23px, 4vw, 34px); }
-header p { margin: 9px 0 0; color: var(--muted); }
-main {
-  max-width: 1160px;
-  margin: 24px auto;
-  padding: 0 16px 48px;
-  display: grid;
-  grid-template-columns: minmax(260px, 350px) 1fr;
-  gap: 20px;
-  align-items: start;
-}
+header h1 { font-size: clamp(22px, 4vw, 32px); margin: 0; }
+header p { margin: 8px 0 0; color: var(--muted); font-size: 14px; }
+main { max-width: 1100px; margin: 24px auto; padding: 0 16px 40px; }
+.screen { display: none; }
+.screen.active { display: block; }
 .panel {
-  min-width: 0;
   background: var(--panel);
   border: 1px solid var(--line);
   border-radius: 18px;
   padding: 20px;
-  box-shadow: 0 8px 28px #294b7710;
+  margin-bottom: 18px;
+  box-shadow: 0 6px 24px #243c6510;
 }
-.panel h2 { font-size: 18px; margin: 0 0 14px; }
-.left { display: grid; gap: 16px; }
-
-/* 修正：画像選択欄を隠さず、常に画面に表示する */
-input[type="file"] {
-  display: block;
-  position: static;
-  width: 100%;
-  max-width: 100%;
-  margin-top: 12px;
-  padding: 12px;
-  border: 2px solid #b8ccef;
-  border-radius: 12px;
-  background: #f8fbff;
-  color: var(--ink);
-  font: inherit;
-  font-size: 14px;
-  cursor: pointer;
-}
-input[type="file"]::file-selector-button {
-  border: 0;
-  border-radius: 8px;
-  background: var(--blue);
-  color: white;
-  padding: 10px 12px;
-  margin-right: 10px;
-  font: inherit;
-  font-weight: 700;
-  cursor: pointer;
-}
-label {
-  font-size: 14px;
-  font-weight: 650;
-  display: block;
-  margin-bottom: 7px;
-}
-input[type="text"] {
-  width: 100%;
-  min-width: 0;
-  border: 1px solid var(--line);
-  border-radius: 10px;
-  padding: 11px 12px;
-  font: inherit;
-  color: var(--ink);
-  background: #fff;
-}
-input[type="text"]:focus {
-  outline: 2px solid #b9d1ff;
-  border-color: var(--blue);
-}
+h2 { font-size: 19px; margin: 0 0 16px; }
+p { line-height: 1.7; }
+button, input { font: inherit; }
 button {
   border: 0;
   border-radius: 11px;
-  padding: 11px 14px;
-  font: inherit;
-  font-weight: 700;
+  padding: 12px 16px;
   cursor: pointer;
+  font-weight: 700;
   -webkit-tap-highlight-color: transparent;
 }
 button:active { opacity: .8; }
-.primary { background: var(--blue); color: #fff; }
-.secondary { background: #edf3ff; color: #2456a8; }
-.danger { background: #fff0f0; color: #b33a3a; }
-.btnrow {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-  margin-top: 12px;
+.primary { color: #fff; background: var(--blue); }
+.secondary { color: #315da9; background: #edf3ff; }
+.danger { color: #b33a3a; background: #fff0f0; }
+button:disabled { opacity: .45; cursor: not-allowed; }
+.file-input {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  margin: 12px 0;
+  padding: 12px;
+  border: 2px solid #c8d7f0;
+  border-radius: 12px;
+  background: #f8fbff;
+  font-size: 14px;
 }
-.btnrow button { flex: 1; }
-.hint {
-  font-size: 12px;
-  color: var(--muted);
-  line-height: 1.7;
-  margin: 12px 0 0;
+.file-input::file-selector-button {
+  border: 0;
+  border-radius: 8px;
+  padding: 9px 12px;
+  margin-right: 10px;
+  color: white;
+  background: var(--blue);
+  font-weight: 700;
 }
+.hint { font-size: 13px; color: var(--muted); }
+.button-row { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 14px; }
+.button-row button { flex: 1 1 140px; }
 .status {
-  padding: 10px;
+  background: #f0f5ff;
+  padding: 10px 12px;
   border-radius: 10px;
-  background: #f1f6ff;
-  color: #315fa8;
   font-size: 13px;
-  line-height: 1.6;
   overflow-wrap: anywhere;
+}
+.setup-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(145px, 1fr));
+  gap: 14px;
+}
+.setup-card {
+  min-width: 0;
+  border: 1px solid var(--line);
+  padding: 9px;
+  border-radius: 13px;
+  background: #fff;
+}
+.setup-card img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 2.5 / 3.5;
+  object-fit: cover;
+  border-radius: 8px;
+  background: #eef2f8;
+}
+.setup-card label {
+  display: block;
+  margin-top: 9px;
+  font-size: 13px;
+  font-weight: 700;
+}
+.setup-card input {
+  width: 100%;
+  min-width: 0;
+  margin-top: 6px;
+  padding: 9px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  font-size: 14px;
+}
+.setup-card .delete-card {
+  width: 100%;
+  margin-top: 7px;
+  padding: 7px;
+  font-size: 12px;
+}
+.empty {
+  grid-column: 1 / -1;
+  padding: 28px 12px;
+  text-align: center;
+  border: 1px dashed var(--line);
+  border-radius: 12px;
+  color: var(--muted);
 }
 .topline {
   display: flex;
-  justify-content: space-between;
-  gap: 12px;
   align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
   margin-bottom: 16px;
 }
 .topline h2 { margin: 0; }
-.count { font-size: 13px; color: var(--muted); white-space: nowrap; }
-.grid {
+.count { color: var(--muted); font-size: 13px; }
+.play-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(125px, 1fr));
-  gap: 16px;
+  grid-template-columns: repeat(auto-fill, minmax(135px, 1fr));
+  gap: 18px;
 }
-.card-wrap { min-width: 0; }
-.card {
+.play-card-wrap { min-width: 0; text-align: center; }
+.play-card {
   width: 100%;
-  aspect-ratio: 2.5 / 3.5;
-  position: relative;
-  perspective: 1000px;
-  border: 0;
-  padding: 0;
-  background: transparent;
   display: block;
+  padding: 0;
+  border-radius: 14px;
+  background: transparent;
+  position: relative;
+  aspect-ratio: 2.5 / 3.5;
+  perspective: 1000px;
+  -webkit-perspective: 1000px;
 }
 .card-inner {
   position: absolute;
   inset: 0;
+  border-radius: 14px;
   transform-style: preserve-3d;
-  transition: transform .5s ease;
-  border-radius: 13px;
+  -webkit-transform-style: preserve-3d;
+  transition: transform .55s ease;
 }
-.card.is-flipped .card-inner { transform: rotateY(180deg); }
-.face {
+.play-card.flipped .card-inner { transform: rotateY(180deg); }
+.card-face {
   position: absolute;
   inset: 0;
+  overflow: hidden;
+  border-radius: 14px;
+  border: 3px solid white;
+  outline: 1px solid #d5deeb;
+  box-shadow: 0 5px 15px #172c4b20;
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
-  border-radius: 13px;
-  overflow: hidden;
-  border: 3px solid #fff;
-  box-shadow: 0 5px 15px #1b35551c;
-  outline: 1px solid #d2dbea;
-  background: #edf2f9;
 }
-.front img {
+.card-front { background: #eaf0f9; }
+.card-front img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
   display: block;
+  object-fit: cover;
 }
-.no-image {
-  height: 100%;
-  display: grid;
-  place-items: center;
-  color: #7b8ca5;
-  font-size: 13px;
-  background: linear-gradient(145deg, #e6edf8, #f8faff);
-}
-.back {
+.card-back {
   transform: rotateY(180deg);
   display: flex;
   align-items: center;
   justify-content: center;
-  text-align: center;
   padding: 12px;
-  background: radial-gradient(circle at 50% 40%, #254b78, #10233f 75%);
   color: #fff;
+  background: radial-gradient(ellipse at center, #315b8b 0%, #172b49 70%);
   border: 5px double var(--gold);
 }
-.back-name {
-  font-size: clamp(15px, 2vw, 21px);
+.card-back-name {
+  font-size: clamp(16px, 2.8vw, 23px);
   font-weight: 800;
   overflow-wrap: anywhere;
-  text-shadow: 0 2px 5px #0008;
+  white-space: pre-wrap;
+  text-align: center;
 }
-.card.selected .face {
+.play-card.flipped .card-face {
   outline: 3px solid var(--blue);
   outline-offset: 2px;
 }
-.card.selected::after {
-  content: "選択中";
-  position: absolute;
-  top: 8px;
-  left: 8px;
-  background: var(--blue);
-  color: white;
-  font-size: 11px;
-  font-weight: 800;
-  padding: 4px 7px;
-  border-radius: 99px;
-  z-index: 5;
+.tap-hint { margin-top: 9px; color: var(--muted); font-size: 12px; }
+.play-card.flipped + .tap-hint { color: #315da9; font-weight: 700; }
+.play-instructions {
+  padding: 12px;
+  border-radius: 11px;
+  background: #f2f6ff;
+  font-size: 14px;
+  margin-bottom: 18px;
 }
-.card-tools {
-  display: flex;
-  gap: 5px;
-  margin-top: 9px;
-}
-.card-tools input {
-  min-width: 0;
-  font-size: 13px;
-  padding: 8px;
-}
-.card-tools button {
-  padding: 7px 10px;
-  flex: 0 0 auto;
-}
-.empty-state {
-  grid-column: 1 / -1;
-  text-align: center;
-  padding: 36px 15px;
-  border: 1px dashed var(--line);
-  border-radius: 14px;
-  color: var(--muted);
-  background: #fbfdff;
-  line-height: 1.8;
-}
-.selected-panel {
+#resultArea {
   margin-top: 24px;
   padding: 18px;
-  border-radius: 15px;
-  background: #f6f9ff;
-  border: 1px solid #dce7f8;
-  display: flex;
-  gap: 16px;
-  align-items: center;
-  min-height: 112px;
+  background: #f6f8fc;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  text-align: center;
 }
-.selected-thumb {
-  width: 72px;
-  aspect-ratio: 2.5 / 3.5;
-  border-radius: 8px;
-  object-fit: cover;
-  border: 2px solid white;
-  display: none;
-}
-.selected-text { min-width: 0; }
-.selected-label { font-size: 12px; color: var(--muted); margin-bottom: 4px; }
-.selected-name {
-  font-size: clamp(20px, 3vw, 28px);
-  font-weight: 850;
-  overflow-wrap: anywhere;
-}
-.empty-result { color: #8290a5; font-size: 14px; }
-.footer-note { font-size: 12px; color: var(--muted); margin-top: 14px; }
-
-@media (max-width: 780px) {
-  main { grid-template-columns: 1fr; margin-top: 14px; }
-  .panel { padding: 16px; }
-  .grid { grid-template-columns: repeat(auto-fill, minmax(105px, 1fr)); gap: 13px; }
+@media (max-width: 500px) {
+  main { margin-top: 14px; }
+  .panel { padding: 15px; }
+  .setup-list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .play-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 15px; }
 }
 </style>
 </head>
@@ -289,400 +241,348 @@ button:active { opacity: .8; }
 
 <header>
   <h1>🃏 カード選択ジェネレーター</h1>
-  <p>好きなカードをタップして、裏面の名前を確認しよう。</p>
+  <p id="headerSubtitle">カードを準備して、めくってみよう。</p>
 </header>
 
 <main>
-  <section class="left">
+  <!-- 画面1：カード準備 -->
+  <section id="setupScreen" class="screen active">
     <div class="panel">
-      <h2>1. カードの表面をアップロード</h2>
-      <p style="font-size:14px;line-height:1.7;margin:0">
-        下のボタンから画像を選んでください。複数の画像を一度に選択できます。
-      </p>
-
-      <!-- iPadでも直接タップできるファイル選択欄 -->
-      <input
-        id="upload"
-        type="file"
-        accept="image/*"
-        multiple
-        aria-label="カード画像を選択"
-      >
-
-      <p class="hint">
-        対応形式：JPG・PNG・WEBPなどの画像ファイル。<br>
-        選んだ画像はカードとして一覧に追加されます。画像は外部サーバーへ送信されません。
-      </p>
-
-      <p class="status" id="uploadStatus" role="status" aria-live="polite">
-        画像選択欄をタップして、カード画像を選んでください。
-      </p>
-
-      <div class="btnrow">
-        <button class="secondary" id="addBlank" type="button">＋ 空のカードを追加</button>
-        <button class="danger" id="clearAll" type="button">すべて削除</button>
+      <h2>STEP 1｜カード画像を選ぶ</h2>
+      <p>カードの表面にしたい画像を選択してください。複数の画像をまとめて選べます。</p>
+      <input id="imageUpload" class="file-input" type="file" accept="image/*" multiple>
+      <div id="uploadStatus" class="status">まだ画像が選択されていません。</div>
+      <p class="hint">画像はこのページ内で処理されます。サーバーにはアップロードされません。</p>
+      <div class="button-row">
+        <button id="addBlankCard" class="secondary" type="button">＋ 空のカードを追加</button>
+        <button id="deleteAllCards" class="danger" type="button">すべて削除</button>
       </div>
     </div>
 
     <div class="panel">
-      <h2>2. カードの選び方</h2>
-      <p style="margin:0;font-size:14px;line-height:1.8">
-        カードをタップすると裏返って名前が表示されます。選択できるのは一度に1枚だけです。別のカードを選ぶと、前のカードの選択は解除されます。
-      </p>
-      <div class="btnrow">
-        <button class="secondary" id="reset" type="button">選択をリセット</button>
-        <button class="primary" id="export" type="button">選択カードをPNG保存</button>
+      <h2>STEP 2｜裏面に表示する名前を決める</h2>
+      <p>各カードの下に名前を入力してください。次の画面では、カードをタップするまで名前は表示されません。</p>
+      <div id="setupList" class="setup-list">
+        <div class="empty">まずはカード画像を選択してください。</div>
       </div>
-      <p class="hint">
-        PNG保存では、選択したカードの表面画像を保存します。画像がないカードは保存できません。
-      </p>
+      <div class="button-row">
+        <button id="goToPlay" class="primary" type="button">カードをめくる画面へ →</button>
+      </div>
+      <p class="hint">※ 名前が空欄のカードは、カード画面で「名前未設定」と表示されます。</p>
     </div>
   </section>
 
-  <section class="panel">
-    <div class="topline">
-      <h2>カード一覧</h2>
-      <span class="count" id="count">0枚</span>
-    </div>
+  <!-- 画面2：カードをめくる -->
+  <section id="playScreen" class="screen">
+    <div class="panel">
+      <div class="topline">
+        <h2>カードを選ぼう</h2>
+        <span id="playCount" class="count">0枚</span>
+      </div>
 
-    <div class="grid" id="grid">
-      <div class="empty-state">
-        まだカードがありません。<br>
-        左側から画像を選択してください。
+      <div class="play-instructions">
+        🎴 カードをタップすると裏返ります。<br>
+        <strong>一度裏返したカードは、同じカードをもう一度タップするまで裏のままです。</strong><br>
+        ほかのカードをタップしても、すでに裏返したカードは表に戻りません。
+      </div>
+
+      <div id="playGrid" class="play-grid"></div>
+
+      <div id="resultArea">
+        裏返したカードの名前は、それぞれのカード上に表示されます。
+      </div>
+
+      <div class="button-row">
+        <button id="hideAll" class="secondary" type="button">すべて表向きに戻す</button>
+        <button id="backToSetup" class="secondary" type="button">← 名前の設定に戻る</button>
       </div>
     </div>
-
-    <div class="selected-panel">
-      <img class="selected-thumb" id="resultImg" alt="選択したカード">
-      <div class="selected-text">
-        <div class="selected-label">選択結果</div>
-        <div class="selected-name empty-result" id="resultName">
-          カードをタップしてください
-        </div>
-      </div>
-    </div>
-
-    <p class="footer-note">
-      カード名は各カードの下に入力できます。ページを閉じると、カードや選択内容はリセットされます。
-    </p>
   </section>
 </main>
 
 <script>
 "use strict";
 
-const upload = document.getElementById("upload");
-const grid = document.getElementById("grid");
-const count = document.getElementById("count");
-const resultImg = document.getElementById("resultImg");
-const resultName = document.getElementById("resultName");
+const imageUpload = document.getElementById("imageUpload");
+const setupList = document.getElementById("setupList");
 const uploadStatus = document.getElementById("uploadStatus");
+const setupScreen = document.getElementById("setupScreen");
+const playScreen = document.getElementById("playScreen");
+const playGrid = document.getElementById("playGrid");
+const playCount = document.getElementById("playCount");
+const headerSubtitle = document.getElementById("headerSubtitle");
 
 let cards = [];
-let selectedId = null;
 let nextId = 1;
-let isReadingFiles = false;
 
-function makeCard(src = "", name = "") {
+/* 裏返したカードのIDを複数保持する */
+const flippedIds = new Set();
+
+function createCard(src = "", name = "") {
   return { id: nextId++, src, name };
 }
 
-function setStatus(message) {
+function setUploadStatus(message) {
   uploadStatus.textContent = message;
 }
 
-function render() {
-  count.textContent = cards.length + "枚";
-  grid.replaceChildren();
-
-  if (cards.length === 0) {
-    const empty = document.createElement("div");
-    empty.className = "empty-state";
-    empty.textContent = "まだカードがありません。左側から画像を選択してください。";
-    grid.appendChild(empty);
-    selectedId = null;
-    updateResult();
-    return;
-  }
-
-  cards.forEach(card => {
-    const wrap = document.createElement("div");
-    wrap.className = "card-wrap";
-
-    const button = document.createElement("button");
-    button.type = "button";
-    button.className = "card";
-    button.setAttribute("aria-label", card.name || "カードを選択");
-
-    if (card.id === selectedId) {
-      button.classList.add("is-flipped", "selected");
-      button.setAttribute("aria-pressed", "true");
-    } else {
-      button.setAttribute("aria-pressed", "false");
-    }
-
-    const inner = document.createElement("span");
-    inner.className = "card-inner";
-
-    const front = document.createElement("span");
-    front.className = "face front";
-
-    if (card.src) {
-      const image = document.createElement("img");
-      image.src = card.src;
-      image.alt = "カード表面";
-      front.appendChild(image);
-    } else {
-      const noImage = document.createElement("span");
-      noImage.className = "no-image";
-      noImage.textContent = "画像なし";
-      front.appendChild(noImage);
-    }
-
-    const back = document.createElement("span");
-    back.className = "face back";
-
-    const backName = document.createElement("span");
-    backName.className = "back-name";
-    backName.textContent = card.name.trim() || "名前未設定";
-    back.appendChild(backName);
-
-    inner.append(front, back);
-    button.appendChild(inner);
-
-    button.addEventListener("click", () => {
-      selectedId = selectedId === card.id ? null : card.id;
-      render();
-    });
-
-    const tools = document.createElement("div");
-    tools.className = "card-tools";
-
-    const nameInput = document.createElement("input");
-    nameInput.type = "text";
-    nameInput.placeholder = "カードの名前";
-    nameInput.value = card.name;
-    nameInput.setAttribute("aria-label", "カードの名前");
-
-    nameInput.addEventListener("input", event => {
-      card.name = event.target.value;
-      backName.textContent = card.name.trim() || "名前未設定";
-      button.setAttribute("aria-label", card.name || "カードを選択");
-      if (selectedId === card.id) updateResult();
-    });
-
-    const deleteButton = document.createElement("button");
-    deleteButton.type = "button";
-    deleteButton.className = "danger";
-    deleteButton.textContent = "×";
-    deleteButton.title = "このカードを削除";
-    deleteButton.setAttribute("aria-label", "このカードを削除");
-
-    deleteButton.addEventListener("click", () => {
-      cards = cards.filter(item => item.id !== card.id);
-      if (selectedId === card.id) selectedId = null;
-      render();
-      setStatus("カードを削除しました。");
-    });
-
-    tools.append(nameInput, deleteButton);
-    wrap.append(button, tools);
-    grid.appendChild(wrap);
+function readFileAsDataURL(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = () => reject(new Error("ファイルを読み込めませんでした。"));
+    reader.readAsDataURL(file);
   });
-
-  updateResult();
 }
 
-function updateResult() {
-  const card = cards.find(item => item.id === selectedId);
-
-  if (!card) {
-    resultImg.style.display = "none";
-    resultImg.removeAttribute("src");
-    resultName.textContent = "カードをタップしてください";
-    resultName.className = "selected-name empty-result";
-    return;
-  }
-
-  if (card.src) {
-    resultImg.src = card.src;
-    resultImg.style.display = "block";
-  } else {
-    resultImg.style.display = "none";
-    resultImg.removeAttribute("src");
-  }
-
-  resultName.textContent = card.name.trim() || "名前未設定";
-  resultName.className = "selected-name";
+function validateImage(src) {
+  return new Promise(resolve => {
+    const image = new Image();
+    image.onload = () => resolve(true);
+    image.onerror = () => resolve(false);
+    image.src = src;
+  });
 }
 
-/* 画像ファイルを安全に読み込んでカードに追加 */
-upload.addEventListener("change", async event => {
-  if (isReadingFiles) return;
-
+/* 画像を選択してカードに追加 */
+imageUpload.addEventListener("change", async event => {
   const files = Array.from(event.target.files || []);
-  if (files.length === 0) return;
+  if (!files.length) return;
 
-  isReadingFiles = true;
-  upload.disabled = true;
-  setStatus("画像を読み込んでいます…");
+  imageUpload.disabled = true;
+  setUploadStatus("画像を読み込んでいます…");
 
   let added = 0;
   const errors = [];
 
   for (const file of files) {
     if (!file.type.startsWith("image/")) {
-      errors.push(file.name + "：画像ファイルではありません");
+      errors.push(file.name + "：画像ファイルではありません。");
       continue;
     }
 
     try {
-      const dataUrl = await new Promise((resolve, reject) => {
-        const reader = new FileReader();
-
-        reader.onload = () => resolve(reader.result);
-        reader.onerror = () => reject(new Error("ファイルの読み込みに失敗しました"));
-
-        reader.readAsDataURL(file);
-      });
-
-      const isValidImage = await new Promise(resolve => {
-        const testImage = new Image();
-        testImage.onload = () => resolve(true);
-        testImage.onerror = () => resolve(false);
-        testImage.src = dataUrl;
-      });
-
-      if (!isValidImage) {
-        errors.push(file.name + "：画像を開けませんでした");
+      const src = await readFileAsDataURL(file);
+      if (!await validateImage(src)) {
+        errors.push(file.name + "：画像を開けませんでした。");
         continue;
       }
 
-      const defaultName = file.name
+      const name = file.name
         .replace(/\.[^.]+$/, "")
         .replace(/[_-]+/g, " ");
 
-      cards.push(makeCard(dataUrl, defaultName));
+      cards.push(createCard(src, name));
       added++;
     } catch (error) {
-      errors.push(file.name + "：読み込みに失敗しました");
+      errors.push(file.name + "：読み込みに失敗しました。");
     }
   }
 
-  upload.disabled = false;
-  upload.value = "";
-  isReadingFiles = false;
+  imageUpload.disabled = false;
+  imageUpload.value = "";
+  renderSetup();
 
-  render();
+  setUploadStatus(
+    added > 0
+      ? added + "枚のカードを追加しました。名前を確認してください。"
+      : "画像を追加できませんでした。JPGまたはPNG画像をお試しください。"
+  );
 
-  if (added > 0) {
-    setStatus(added + "枚のカードを追加しました。下のカード一覧を確認してください。");
-  } else {
-    setStatus("カードを追加できませんでした。JPGまたはPNG画像を試してください。");
-  }
-
-  if (errors.length > 0) {
-    alert(errors.join("\n"));
-  }
+  if (errors.length) alert(errors.join("\n"));
 });
 
 /* 空のカードを追加 */
-document.getElementById("addBlank").addEventListener("click", () => {
-  cards.push(makeCard());
-  render();
-  setStatus("空のカードを追加しました。名前を入力できます。");
+document.getElementById("addBlankCard").addEventListener("click", () => {
+  cards.push(createCard());
+  renderSetup();
+  setUploadStatus("空のカードを追加しました。");
 });
 
 /* すべてのカードを削除 */
-document.getElementById("clearAll").addEventListener("click", () => {
-  if (cards.length === 0) {
-    setStatus("削除するカードがありません。");
+document.getElementById("deleteAllCards").addEventListener("click", () => {
+  if (!cards.length) {
+    setUploadStatus("削除するカードがありません。");
     return;
   }
 
-  if (confirm("すべてのカードを削除しますか？")) {
-    cards = [];
-    selectedId = null;
-    render();
-    setStatus("すべてのカードを削除しました。");
-  }
+  if (!confirm("すべてのカードを削除しますか？")) return;
+
+  cards = [];
+  flippedIds.clear();
+  renderSetup();
+  setUploadStatus("すべてのカードを削除しました。");
 });
 
-/* 選択をリセット */
-document.getElementById("reset").addEventListener("click", () => {
-  selectedId = null;
-  render();
-  setStatus("カードの選択をリセットしました。");
+/* カード準備画面を描画 */
+function renderSetup() {
+  setupList.replaceChildren();
+
+  if (!cards.length) {
+    const empty = document.createElement("div");
+    empty.className = "empty";
+    empty.textContent = "まずはカード画像を選択してください。";
+    setupList.appendChild(empty);
+    return;
+  }
+
+  cards.forEach(card => {
+    const item = document.createElement("div");
+    item.className = "setup-card";
+
+    if (card.src) {
+      const image = document.createElement("img");
+      image.src = card.src;
+      image.alt = "カードの表面";
+      item.appendChild(image);
+    }
+
+    const label = document.createElement("label");
+    label.textContent = "裏面の名前";
+
+    const input = document.createElement("input");
+    input.type = "text";
+    input.value = card.name;
+    input.placeholder = "名前を入力";
+    input.maxLength = 100;
+    input.setAttribute("aria-label", "裏面に表示する名前");
+    input.addEventListener("input", () => {
+      card.name = input.value;
+    });
+
+    const remove = document.createElement("button");
+    remove.type = "button";
+    remove.className = "danger delete-card";
+    remove.textContent = "このカードを削除";
+
+    remove.addEventListener("click", () => {
+      cards = cards.filter(item => item.id !== card.id);
+      flippedIds.delete(card.id);
+      renderSetup();
+    });
+
+    item.append(label, input, remove);
+    setupList.appendChild(item);
+  });
+}
+
+/* カードをめくる画面へ */
+document.getElementById("goToPlay").addEventListener("click", () => {
+  if (!cards.length) {
+    alert("先にカード画像を1枚以上追加してください。");
+    return;
+  }
+
+  flippedIds.clear();
+
+  renderPlay();
+  setupScreen.classList.remove("active");
+  playScreen.classList.add("active");
+  headerSubtitle.textContent = "カードをタップして裏面を確認しよう。";
+  window.scrollTo({ top: 0, behavior: "auto" });
 });
 
-/* 選択したカードの表面をPNGとして保存 */
-document.getElementById("export").addEventListener("click", () => {
-  const card = cards.find(item => item.id === selectedId);
+/* カード画面を描画。裏返したカードは個別に維持する */
+function renderPlay() {
+  playGrid.replaceChildren();
+  playCount.textContent = cards.length + "枚";
 
-  if (!card) {
-    alert("先にカードを1枚タップして選択してください。");
-    return;
-  }
+  cards.forEach(card => {
+    const wrap = document.createElement("div");
+    wrap.className = "play-card-wrap";
 
-  if (!card.src) {
-    alert("選択したカードには画像がありません。");
-    return;
-  }
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "play-card";
 
-  const image = new Image();
+    const isFlipped = flippedIds.has(card.id);
 
-  image.onload = () => {
-    const canvas = document.createElement("canvas");
-    canvas.width = 750;
-    canvas.height = 1050;
+    if (isFlipped) {
+      button.classList.add("flipped");
+      button.setAttribute("aria-pressed", "true");
+      button.setAttribute("aria-label", "裏面を表示中。タップして表に戻す");
+    } else {
+      button.setAttribute("aria-pressed", "false");
+      button.setAttribute("aria-label", "カード。タップして裏面を見る");
+    }
 
-    const context = canvas.getContext("2d");
+    const inner = document.createElement("span");
+    inner.className = "card-inner";
 
-    const scale = Math.max(
-      canvas.width / image.width,
-      canvas.height / image.height
-    );
+    /* 表面 */
+    const front = document.createElement("span");
+    front.className = "card-face card-front";
 
-    const width = image.width * scale;
-    const height = image.height * scale;
+    if (card.src) {
+      const image = document.createElement("img");
+      image.src = card.src;
+      image.alt = "カード表面";
+      image.draggable = false;
+      front.appendChild(image);
+    } else {
+      const placeholder = document.createElement("span");
+      placeholder.textContent = "画像なし";
+      placeholder.style.cssText =
+        "display:grid;place-items:center;width:100%;height:100%;color:#78849a;";
+      front.appendChild(placeholder);
+    }
 
-    context.drawImage(
-      image,
-      (canvas.width - width) / 2,
-      (canvas.height - height) / 2,
-      width,
-      height
-    );
+    /* 裏面の名前は、裏返したカードだけに描画 */
+    const back = document.createElement("span");
+    back.className = "card-face card-back";
 
-    canvas.toBlob(blob => {
-      if (!blob) {
-        alert("PNGを作成できませんでした。");
-        return;
+    if (isFlipped) {
+      const name = document.createElement("span");
+      name.className = "card-back-name";
+      name.textContent = card.name.trim() || "名前未設定";
+      back.appendChild(name);
+    }
+
+    inner.append(front, back);
+    button.appendChild(inner);
+
+    button.addEventListener("click", () => {
+      if (flippedIds.has(card.id)) {
+        /* 同じカードを再タップした場合だけ表に戻す */
+        flippedIds.delete(card.id);
+      } else {
+        /* 別のカードが裏返っていても、そのまま維持する */
+        flippedIds.add(card.id);
       }
 
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement("a");
-      link.href = url;
-      link.download =
-        (card.name.trim() || "selected-card").replace(/[\\/:*?"<>|]/g, "_") +
-        ".png";
+      renderPlay();
+    });
 
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
+    const hint = document.createElement("div");
+    hint.className = "tap-hint";
+    hint.textContent = isFlipped
+      ? "裏面表示中・タップして戻す"
+      : "タップして裏を見る";
 
-      setTimeout(() => URL.revokeObjectURL(url), 2000);
-    }, "image/png");
-  };
+    wrap.append(button, hint);
+    playGrid.appendChild(wrap);
+  });
+}
 
-  image.onerror = () => {
-    alert("画像を読み込めませんでした。別の画像をお試しください。");
-  };
-
-  image.src = card.src;
+/* すべてのカードを表向きに戻す */
+document.getElementById("hideAll").addEventListener("click", () => {
+  flippedIds.clear();
+  renderPlay();
 });
 
-render();
+/* 名前設定画面へ戻る */
+document.getElementById("backToSetup").addEventListener("click", () => {
+  flippedIds.clear();
+
+  playScreen.classList.remove("active");
+  setupScreen.classList.add("active");
+  headerSubtitle.textContent = "カードを準備して、めくってみよう。";
+
+  renderSetup();
+  window.scrollTo({ top: 0, behavior: "auto" });
+});
+
+renderSetup();
 </script>
 </body>
 </html>
