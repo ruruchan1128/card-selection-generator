@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>カード選択ジェネレーター</title>
+<style>
+:root{--bg:#f3f6fb;--panel:#fff;--ink:#172b4d;--muted:#64748b;--blue:#3979ef;--line:#dbe4f0;--gold:#d9b66d}
+*{box-sizing:border-box}body{margin:0;background:linear-gradient(140deg,#f4f8ff,#f8f5ff);color:var(--ink);font-family:system-ui,-apple-system,"Hiragino Kaku Gothic ProN","Noto Sans JP",sans-serif}
+header{padding:28px 20px 22px;text-align:center;border-bottom:1px solid #e3eaf4;background:#ffffffc9}h1{margin:0;font-size:clamp(24px,4vw,36px);letter-spacing:.03em}header p{margin:9px 0 0;color:var(--muted)}
+main{max-width:1160px;margin:24px auto;padding:0 16px 48px;display:grid;grid-template-columns:minmax(280px,350px) 1fr;gap:20px;align-items:start}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:20px;box-shadow:0 8px 28px #294b7710}.panel h2{font-size:18px;margin:0 0 14px}.left{display:grid;gap:16px}
+.drop{display:block;border:2px dashed #b8ccef;border-radius:14px;padding:24px 14px;text-align:center;background:#f8fbff;cursor:pointer;color:#315fa8;font-weight:700}.drop:hover{background:#eef5ff}.drop small{display:block;color:var(--muted);font-weight:400;margin-top:7px}
+input[type=file]{position:absolute;left:-9999px}label{font-size:14px;font-weight:650;display:block;margin-bottom:7px}.field{margin-top:14px}input[type=text],textarea,select{width:100%;border:1px solid var(--line);border-radius:10px;padding:11px 12px;font:inherit;color:var(--ink);background:#fff}input[type=text]:focus,textarea:focus{outline:2px solid #b9d1ff;border-color:var(--blue)}
+button{border:0;border-radius:11px;padding:11px 14px;font:inherit;font-weight:700;cursor:pointer;transition:.15s}button:active{transform:scale(.98)}.primary{background:var(--blue);color:#fff}.secondary{background:#edf3ff;color:#2456a8}.danger{background:#fff0f0;color:#b33a3a}.btnrow{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.btnrow button{flex:1}.hint{font-size:12px;color:var(--muted);line-height:1.6;margin:12px 0 0}
+.topline{display:flex;justify-content:space-between;gap:12px;align-items:center;margin-bottom:16px}.topline h2{margin:0}.count{font-size:13px;color:var(--muted);white-space:nowrap}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(135px,1fr));gap:16px}
+.card-wrap{min-width:0}.card{width:100%;aspect-ratio:2.5/3.5;position:relative;perspective:1000px;border:0;padding:0;background:transparent;display:block}.card-inner{position:absolute;inset:0;transform-style:preserve-3d;transition:transform .55s cubic-bezier(.2,.75,.25,1);border-radius:13px}.card.is-flipped .card-inner{transform:rotateY(180deg)}.face{position:absolute;inset:0;backface-visibility:hidden;border-radius:13px;overflow:hidden;border:3px solid #fff;box-shadow:0 5px 15px #1b35551c;outline:1px solid #d2dbea;background:#edf2f9}.front img{width:100%;height:100%;object-fit:cover;display:block}.front .no-image{height:100%;display:grid;place-items:center;color:#7b8ca5;font-size:13px;background:linear-gradient(145deg,#e6edf8,#f8faff)}.back{transform:rotateY(180deg);display:flex;align-items:center;justify-content:center;text-align:center;padding:12px;background:radial-gradient(circle at 50% 40%,#254b78,#10233f 75%);color:#fff;border:5px double var(--gold)}.back:before,.back:after{content:"✦";position:absolute;color:var(--gold);font-size:22px}.back:before{top:8px;left:10px}.back:after{bottom:8px;right:10px}.back-name{font-size:clamp(15px,2vw,21px);font-weight:800;overflow-wrap:anywhere;text-shadow:0 2px 5px #0008}.card.selected .face{outline:3px solid var(--blue);outline-offset:3px}.card.selected:after{content:"選択中";position:absolute;top:8px;left:8px;background:var(--blue);color:white;font-size:11px;font-weight:800;padding:4px 7px;border-radius:99px;z-index:5}.card-tools{display:flex;gap:5px;margin-top:9px}.card-tools input{min-width:0;font-size:13px;padding:8px}.card-tools button{padding:7px 9px;flex:0 0 auto}.selected-panel{margin-top:24px;padding:18px;border-radius:15px;background:#f6f9ff;border:1px solid #dce7f8;display:flex;gap:16px;align-items:center;min-height:112px}.selected-thumb{width:72px;aspect-ratio:2.5/3.5;border-radius:8px;object-fit:cover;border:2px solid white;box-shadow:0 2px 8px #18345a20;display:none}.selected-text{min-width:0}.selected-label{font-size:12px;color:var(--muted);margin-bottom:4px}.selected-name{font-size:clamp(20px,3vw,28px);font-weight:850;overflow-wrap:anywhere}.empty-result{color:#8290a5;font-size:14px}.empty-state{grid-column:1/-1;text-align:center;padding:38px 15px;border:1px dashed var(--line);border-radius:14px;color:var(--muted);background:#fbfdff}.footer-note{font-size:12px;color:var(--muted);margin-top:14px}
+@media(max-width:780px){main{grid-template-columns:1fr;margin-top:14px}.left{grid-template-columns:1fr}.panel{padding:16px}.grid{grid-template-columns:repeat(auto-fill,minmax(112px,1fr));gap:13px}}
+</style>
+</head>
+<body>
+<header><h1>🃏 カード選択ジェネレーター</h1><p>好きなカードをタップして、裏面の名前を確認しよう。</p></header>
+<main>
+<section class="left">
+  <div class="panel">
+    <h2>1. カードの表面をアップロード</h2>
+    <div class="drop" style="cursor:default">
+      <strong>画像を選択（複数選択OK）</strong>
+      <small>下のファイル選択欄をタップしてください。PNG・JPG・WEBP対応。</small>
+    </div>
+    <input id="upload" type="file" accept="image/*" multiple style="display:block;width:100%;margin-top:12px;padding:8px;border:1px solid #dbe4f0;border-radius:10px;background:#fff;font-size:14px">
+    <p class="hint">アップロードした画像ごとにカードが作成されます。画像は端末から外部へ送信されません。</p>
+    <p class="hint" id="uploadStatus" role="status" aria-live="polite">画像を選ぶと、カード一覧に表示されます。</p>
+    <div class="btnrow"><button class="secondary" id="addBlank">＋ 空のカードを追加</button><button class="danger" id="clearAll">すべて削除</button></div>
+  </div>
+  <div class="panel">
+    <h2>2. 選び方</h2>
+    <p style="margin:0;font-size:14px;line-height:1.8">カードをタップすると裏返って名前が表示されます。選択できるのは一度に1枚だけです。別のカードをタップすると、前のカードの選択は解除されます。</p>
+    <div class="btnrow"><button class="secondary" id="reset">選択をリセット</button><button class="secondary" id="export">選択カードをPNG保存</button></div>
+    <p class="hint">PNG保存は、選択中のカードの表面画像を保存します。未選択の場合は保存できません。</p>
+  </div>
+</section>
+<section class="panel">
+  <div class="topline"><h2>カード一覧</h2><span class="count" id="count">0枚</span></div>
+  <div class="grid" id="grid"><div class="empty-state">まだカードがありません。左側から画像をアップロードしてください。</div></div>
+  <div class="selected-panel" id="result">
+    <img class="selected-thumb" id="resultImg" alt="選択したカード">
+    <div class="selected-text"><div class="selected-label">選択結果</div><div class="selected-name empty-result" id="resultName">カードをタップしてください</div></div>
+  </div>
+  <p class="footer-note">カードの名前は各カードの下に入力できます。選択内容はページを閉じるとリセットされます。</p>
+</section>
+</main>
+<script>
+const upload=document.getElementById('upload'),grid=document.getElementById('grid'),count=document.getElementById('count');
+const resultImg=document.getElementById('resultImg'),resultName=document.getElementById('resultName');
+let cards=[],selectedId=null,nextId=1;
+function makeCard(src='',name=''){
+ return {id:nextId++,src,name};
+}
+function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function render(){
+ count.textContent=cards.length+'枚';
+ if(!cards.length){grid.innerHTML='<div class="empty-state">まだカードがありません。左側から画像をアップロードしてください。</div>';selectedId=null;updateResult();return;}
+ grid.innerHTML='';
+ cards.forEach(c=>{
+  const wrap=document.createElement('div');wrap.className='card-wrap';
+  const btn=document.createElement('button');btn.className='card'+(c.id===selectedId?' is-flipped selected':'');btn.type='button';btn.setAttribute('aria-label',c.name||'カードを選択');
+  const front=c.src?`<img src="${c.src}" alt="カード表面">`:'<div class="no-image">画像なし</div>';
+  btn.innerHTML=`<span class="card-inner"><span class="face front">${front}</span><span class="face back"><span class="back-name">${escapeHtml(c.name.trim()||'名前未設定')}</span></span></span>`;
+  btn.addEventListener('click',()=>{selectedId=(selectedId===c.id?null:c.id);render();});
+  const tools=document.createElement('div');tools.className='card-tools';
+  const input=document.createElement('input');input.type='text';input.placeholder='裏面に表示する名前';input.value=c.name;input.setAttribute('aria-label','カードの名前');
+  input.addEventListener('input',e=>{c.name=e.target.value;const name=btn.querySelector('.back-name');name.textContent=c.name.trim()||'名前未設定';if(selectedId===c.id)updateResult();});
+  const del=document.createElement('button');del.className='danger';del.textContent='×';del.title='このカードを削除';del.addEventListener('click',()=>{cards=cards.filter(x=>x.id!==c.id);if(selectedId===c.id)selectedId=null;render();});
+  tools.append(input,del);wrap.append(btn,tools);grid.append(wrap);
+ });
+ updateResult();
+}
+function updateResult(){
+ const c=cards.find(x=>x.id===selectedId);
+ if(!c){resultImg.style.display='none';resultImg.removeAttribute('src');resultName.textContent='カードをタップしてください';resultName.className='selected-name empty-result';return;}
+ if(c.src){resultImg.src=c.src;resultImg.style.display='block';}else{resultImg.style.display='none';}
+ resultName.textContent=c.name.trim()||'名前未設定';resultName.className='selected-name';
+}
+upload.addEventListener('change', async e => {
+ const files = Array.from(e.target.files || []);
+ if (!files.length) return;
+ let added = 0;
+ const errors = [];
+ for (const file of files) {
+   if (!file.type.startsWith('image/')) {
+     errors.push(file.name + '：画像ファイルとして認識できません');
+     continue;
+   }
+   try {
+     const dataUrl = await new Promise((resolve, reject) => {
+       const reader = new FileReader();
+       reader.onload = () => resolve(reader.result);
+       reader.onerror = () => reject(new Error('read failed'));
+       reader.readAsDataURL(file);
+     });
+     const loaded = await new Promise(resolve => {
+       const test = new Image();
+       test.onload = () => resolve(true);
+       test.onerror = () => resolve(false);
+       test.src = dataUrl;
+     });
+     if (!loaded) {
+       errors.push(file.name + '：画像を表示できません。JPGまたはPNGをお試しください。');
+       continue;
+     }
+     const defaultName = file.name.replace(/\.[^.]+$/, '').replace(/[_-]+/g, ' ');
+     cards.push(makeCard(dataUrl, defaultName));
+     added++;
+   } catch (err) {
+     errors.push(file.name + '：読み込みに失敗しました');
+   }
+ }
+ upload.value = '';
+ render();
+ const status = document.getElementById('uploadStatus');
+ if (status) status.textContent = added > 0
+   ? added + '枚のカードを追加しました。右側のカード一覧に表示しています。'
+   : 'カードを追加できませんでした。JPGまたはPNG画像をお試しください。';
+ if (errors.length) alert(errors.join('\n'));
+ if (added > 0) document.getElementById('grid').scrollIntoView({behavior:'smooth',block:'nearest'});
+});
+document.getElementById('addBlank').addEventListener('click',()=>{cards.push(makeCard());render();document.getElementById('grid').scrollIntoView({behavior:'smooth',block:'nearest'});});
+document.getElementById('clearAll').addEventListener('click',()=>{if(!cards.length)return;if(confirm('すべてのカードを削除しますか？')){cards=[];selectedId=null;render();}});
+document.getElementById('reset').addEventListener('click',()=>{selectedId=null;render();});
+document.getElementById('export').addEventListener('click',()=>{
+ const c=cards.find(x=>x.id===selectedId);if(!c){alert('先にカードを1枚タップして選択してください。');return;}if(!c.src){alert('選択したカードに表面画像がありません。');return;}
+ const img=new Image();img.onload=()=>{const canvas=document.createElement('canvas');canvas.width=750;canvas.height=1050;const ctx=canvas.getContext('2d');
+ const ratio=Math.max(canvas.width/img.width,canvas.height/img.height),w=img.width*ratio,h=img.height*ratio;ctx.drawImage(img,(canvas.width-w)/2,(canvas.height-h)/2,w,h);
+ canvas.toBlob(blob=>{if(!blob){alert('PNGを作成できませんでした。');return;}const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=(c.name.trim()||'selected-card').replace(/[\\/:*?"<>|]/g,'_')+'.png';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);},'image/png');};img.onerror=()=>alert('画像を読み込めませんでした。');img.src=c.src;
+});
+render();
+</script>
+</body>
+</html>
